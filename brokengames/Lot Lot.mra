@@ -1,0 +1,131 @@
+<misterromdescription>
+	<name>Lot Lot</name>
+	<mameversion>0221</mameversion>
+	<setname>lotlot</setname>
+	<mratimestamp>20200601015747</mratimestamp>
+	<year>1985</year>
+	<manufacturer>Irem (licensed from Tokuma Shoten)</manufacturer>
+	<category>Puzzle</category>
+	<rbf>iremm62</rbf>
+	<switches default="FF,F5">
+		<dip bits="0,1" name="Speed" ids="Very Fast,Fast,Slow,Very Slow"></dip>
+		<dip bits="2,3" name="Lives" ids="4,2,1,3"></dip>
+                <dip bits="4,7" name="Coinage" ids="Free Play,1C/1C" values="16,15"></dip>
+		<dip bits="8" name="Flip Screen" ids="On,Off"></dip>
+		<dip bits="9" name="Cabinet" ids="Upright,Cocktail"></dip>
+		<dip bits="10" name="Coin Mode" ids="Mode 2,Mode 1"></dip>
+		<dip bits="11" name="Demo Sounds" ids="On,Off"></dip>
+		<dip bits="12" name="Freeze (Cheat)" ids="On,Off"></dip>
+		<dip bits="13" name="Unknown" ids="On,Off"></dip>
+		<dip bits="14" name="Invulnerability (Cheat)" ids="On,Off"></dip>
+		<dip bits="15" name="Service Mode" ids="On,Off"></dip>
+	</switches>
+	<rom index="1">
+		<part>08</part>
+	</rom>
+	<rom index="0" zip="lotlot.zip" md5="none">
+		<part crc="2913d08f" name="lot-a-4e"/>
+		<part crc="0443095f" name="lot-a-4d"/>
+		<part crc="2913d08f" name="lot-a-4e"/>
+		<part crc="0443095f" name="lot-a-4d"/>
+		<part crc="2913d08f" name="lot-a-4e"/>
+		<part crc="0443095f" name="lot-a-4d"/>
+		<part crc="2913d08f" name="lot-a-4e"/>
+		<part crc="0443095f" name="lot-a-4d"/>
+		<part crc="0781cee7" repeat="8" name="lot-a-3h"/>
+		<interleave output="32">
+			<part crc="1b3695f4" name="lot-k-4a" map="0001"/>
+			<part crc="bd2b0730" name="lot-k-4c" map="0010"/>
+			<part crc="930ddd55" name="lot-k-4b" map="0100"/>
+			<part crc="930ddd55" name="lot-k-4b" map="1000"/>
+		</interleave>
+		<interleave output="32">
+			<part crc="1b3695f4" name="lot-k-4a" map="0001"/>
+			<part crc="bd2b0730" name="lot-k-4c" map="0010"/>
+			<part crc="930ddd55" name="lot-k-4b" map="0100"/>
+			<part crc="930ddd55" name="lot-k-4b" map="1000"/>
+		</interleave>
+		<interleave output="32">
+			<part crc="1b3695f4" name="lot-k-4a" map="0001"/>
+			<part crc="bd2b0730" name="lot-k-4c" map="0010"/>
+			<part crc="930ddd55" name="lot-k-4b" map="0100"/>
+			<part crc="930ddd55" name="lot-k-4b" map="1000"/>
+		</interleave>
+		<interleave output="32">
+			<part crc="1b3695f4" name="lot-k-4a" map="0001"/>
+			<part crc="bd2b0730" name="lot-k-4c" map="0010"/>
+			<part crc="930ddd55" name="lot-k-4b" map="0100"/>
+			<part crc="930ddd55" name="lot-k-4b" map="1000"/>
+		</interleave>
+		<interleave output="32">
+			<part crc="fd27cb90" name="lot-b-4k" map="0001"/>
+			<part crc="bd486fff" name="lot-b-3n" map="0010"/>
+			<part crc="3026ee6c" name="lot-b-4c" map="0100"/>
+			<part crc="3026ee6c" name="lot-b-4c" map="1000"/>
+		</interleave>
+		<interleave output="32">
+			<part crc="fd27cb90" name="lot-b-4k" map="0001"/>
+			<part crc="bd486fff" name="lot-b-3n" map="0010"/>
+			<part crc="3026ee6c" name="lot-b-4c" map="0100"/>
+			<part crc="3026ee6c" name="lot-b-4c" map="1000"/>
+		</interleave>
+		<interleave output="32">
+			<part crc="fd27cb90" name="lot-b-4k" map="0001"/>
+			<part crc="bd486fff" name="lot-b-3n" map="0010"/>
+			<part crc="3026ee6c" name="lot-b-4c" map="0100"/>
+			<part crc="3026ee6c" name="lot-b-4c" map="1000"/>
+		</interleave>
+		<interleave output="32">
+			<part crc="fd27cb90" name="lot-b-4k" map="0001"/>
+			<part crc="bd486fff" name="lot-b-3n" map="0010"/>
+			<part crc="3026ee6c" name="lot-b-4c" map="0100"/>
+			<part crc="3026ee6c" name="lot-b-4c" map="1000"/>
+		</interleave>
+		<interleave output="32">
+			<part crc="fd27cb90" name="lot-b-4k" map="0001"/>
+			<part crc="bd486fff" name="lot-b-3n" map="0010"/>
+			<part crc="3026ee6c" name="lot-b-4c" map="0100"/>
+			<part crc="3026ee6c" name="lot-b-4c" map="1000"/>
+		</interleave>
+		<interleave output="32">
+			<part crc="fd27cb90" name="lot-b-4k" map="0001"/>
+			<part crc="bd486fff" name="lot-b-3n" map="0010"/>
+			<part crc="3026ee6c" name="lot-b-4c" map="0100"/>
+			<part crc="3026ee6c" name="lot-b-4c" map="1000"/>
+		</interleave>
+		<interleave output="32">
+			<part crc="fd27cb90" name="lot-b-4k" map="0001"/>
+			<part crc="bd486fff" name="lot-b-3n" map="0010"/>
+			<part crc="3026ee6c" name="lot-b-4c" map="0100"/>
+			<part crc="3026ee6c" name="lot-b-4c" map="1000"/>
+		</interleave>
+		<interleave output="32">
+			<part crc="fd27cb90" name="lot-b-4k" map="0001"/>
+			<part crc="bd486fff" name="lot-b-3n" map="0010"/>
+			<part crc="3026ee6c" name="lot-b-4c" map="0100"/>
+			<part crc="3026ee6c" name="lot-b-4c" map="1000"/>
+		</interleave>
+		<interleave output="32">
+			<part crc="3b7d95ba" name="lot-k-4p" map="0001"/>
+			<part crc="f98dca1f" name="lot-k-4l" map="0010"/>
+			<part crc="f0cd76a5" name="lot-k-4n" map="0100"/>
+			<part crc="f0cd76a5" name="lot-k-4n" map="1000"/>
+		</interleave>
+		<interleave output="32">
+			<part crc="3b7d95ba" name="lot-k-4p" map="0001"/>
+			<part crc="f98dca1f" name="lot-k-4l" map="0010"/>
+			<part crc="f0cd76a5" name="lot-k-4n" map="0100"/>
+			<part crc="f0cd76a5" name="lot-k-4n" map="1000"/>
+		</interleave>
+		<part crc="c146461d" name="lot-b-1m"/>
+		<part crc="01e07db6" name="lot-b-1n"/>
+		<part crc="8b6fcde3" name="lot-b-1l"/>
+		<part crc="b820a05e" name="lot-k-2f"/>
+		<part crc="9b1fa005" name="lot-k-2e"/>
+		<part crc="315ed9a8" name="lot-k-2d"/>
+		<part crc="ac3e230d" name="lot-k-2l"/>
+		<part crc="1811ad2b" name="lot-k-2k"/>
+		<part crc="e791ef2a" name="lot-k-2j"/>
+		<part crc="110b21fd" name="lot-b-5p"/>
+	</rom>
+</misterromdescription>
