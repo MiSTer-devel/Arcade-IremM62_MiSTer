@@ -7,6 +7,7 @@
 	<manufacturer>Irem (licensed from Broderbund)</manufacturer>
 	<category>Platform</category>
 	<rbf>iremm62</rbf>
+	<buttons names="Dig Left,Dig Right,Credit,Start" default="B,A,Select,Start"/>
 	<switches default="FF,FF">
 		<dip bits="0" name="Timer" ids="Fast,Slow"></dip>
 		<dip bits="1" name="2 Players Game" ids="1 Credit,2 Credits"></dip>

@@ -264,8 +264,8 @@ reg btn_down  = 0;
 reg btn_right = 0;
 reg btn_left  = 0;
 reg btn_coin  = 0;
-reg btn_fireA  =0;
-reg btn_fireB  = 0;
+reg btn_fireA = 0;
+reg btn_fireB = 0;
 
 reg btn_start_1=0;
 reg btn_start_2=0;
@@ -279,24 +279,24 @@ reg btn_fireA_2=0;
 reg btn_fireB_2=0;
 
 wire no_rotate = status[2] | direct_video | landscape  ;
-wire m_start    = btn_start_1 | joy1[7] | joy2[7];
-wire m_start_2  = btn_start_2 | joy1[6] | joy2[6];
-wire m_coin_1     = btn_coin    | joy1[8] | btn_coin_1  ;
-wire m_coin_2     =  joy2[8] | btn_coin_2;
+wire m_start    = btn_start_1 | joy1[7];
+wire m_start_2  = btn_start_2 | joy2[7];
+wire m_coin_1     = btn_coin    | joy1[6] | btn_coin_1  ;
+wire m_coin_2     =  joy2[6] | btn_coin_2;
 
-wire m_up     =   btn_up    | joy1[3];
-wire m_down   =   btn_down  | joy1[2];
-wire m_left   =  btn_left  | joy1[1];
-wire m_right  =  btn_right | joy1[0];
-wire m_fireA   = btn_fireA | joy1[4];
-wire m_fireB   = btn_fireB | joy1[5];
+wire m_up    = btn_up    | joy1[3] | joy2[3];
+wire m_down  = btn_down  | joy1[2] | joy2[2];
+wire m_left  = btn_left  | joy1[1] | joy2[1];
+wire m_right = btn_right | joy1[0] | joy2[0];
+wire m_fireA = btn_fireA | joy1[4] | joy2[4];
+wire m_fireB = btn_fireB | joy1[5] | joy2[5];
 
-wire m_up_2     =  btn_up_2    | joy2[3];
-wire m_down_2   =  btn_down_2  | joy2[2];
-wire m_left_2   =  btn_left_2  | joy2[1];
-wire m_right_2  =  btn_right_2 | joy2[0];
-wire m_fireA_2   = btn_fireA_2 | joy2[4];
-wire m_fireB_2   = btn_fireB_2 | joy2[5];
+wire m_up_2    = btn_up_2    | joy2[3];
+wire m_down_2  = btn_down_2  | joy2[2];
+wire m_left_2  = btn_left_2  | joy2[1];
+wire m_right_2 = btn_right_2 | joy2[0];
+wire m_fireA_2 = btn_fireA_2 | joy2[4];
+wire m_fireB_2 = btn_fireB_2 | joy2[5];
 
 wire hblank, vblank;
 wire hs, vs;

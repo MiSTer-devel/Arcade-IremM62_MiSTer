@@ -7,8 +7,7 @@
 	<manufacturer>Irem</manufacturer>
 	<category>Space / Moon</category>
 	<rbf>iremm62</rbf>
-        <buttons names="Fire,-,Start 2P,Start 1P,Coin" default="A,Select,Start,R"/>
-
+	<buttons names="Fire,-,Credit,Start" default="B,Select,Start"/>
 	<switches default="FF,FD">
 		<dip bits="0,1" name="Lives" ids="2,4,5,3"></dip>
 		<dip bits="2,3" name="Bonus Life" ids="100 and 80k,80k and every 120k,60k and every 100k,40k and every 80k"></dip>
