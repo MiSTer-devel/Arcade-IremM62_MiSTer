@@ -504,7 +504,7 @@ target_top target_top(
 
 	.dl_addr(ioctl_addr - 20'hA0000),
 	.dl_data(ioctl_dout),
-	.dl_wr(ioctl_wr),
+	.dl_wr(ioctl_wr & !ioctl_index),
 
 	.cpu_rom_addr(rom_addr),
 	.cpu_rom_do( rom_addr[0] ? rom_do[15:8] : rom_do[7:0] ),
