@@ -32,11 +32,15 @@ module emu
 	inout  [45:0] HPS_BUS,
 
 	//Base video clock. Usually equals to CLK_SYS.
-	output        VGA_CLK,
+	output        CLK_VIDEO,
 
-	//Multiple resolutions are supported using different VGA_CE rates.
+	//Multiple resolutions are supported using different CE_PIXEL rates.
 	//Must be based on CLK_VIDEO
-	output        VGA_CE,
+	output        CE_PIXEL,
+
+	//Video aspect ratio for HDMI. Most retro systems have ratio 4:3.
+	output  [7:0] VIDEO_ARX,
+	output  [7:0] VIDEO_ARY,
 
 	output  [7:0] VGA_R,
 	output  [7:0] VGA_G,
@@ -45,25 +49,24 @@ module emu
 	output        VGA_VS,
 	output        VGA_DE,    // = ~(VBlank | HBlank)
 	output        VGA_F1,
+	output [1:0]  VGA_SL,
 
-	//Base video clock. Usually equals to CLK_SYS.
-	output        HDMI_CLK,
+	// Use framebuffer from DDRAM (USE_FB=1 in qsf)
+	// FB_FORMAT:
+	//    [2:0] : 011=8bpp(palette) 100=16bpp 101=24bpp 110=32bpp
+	//    [3]   : 0=16bits 565 1=16bits 1555
+	//    [4]   : 0=RGB  1=BGR (for 16/24/32 modes)
+	//
+	// FB_STRIDE either 0 (rounded to 256 bytes) or multiple of 16 bytes.
 
-	//Multiple resolutions are supported using different HDMI_CE rates.
-	//Must be based on CLK_VIDEO
-	output        HDMI_CE,
-
-	output  [7:0] HDMI_R,
-	output  [7:0] HDMI_G,
-	output  [7:0] HDMI_B,
-	output        HDMI_HS,
-	output        HDMI_VS,
-	output        HDMI_DE,   // = ~(VBlank | HBlank)
-	output  [1:0] HDMI_SL,   // scanlines fx
-
-	//Video aspect ratio for HDMI. Most retro systems have ratio 4:3.
-	output  [7:0] HDMI_ARX,
-	output  [7:0] HDMI_ARY,
+	output        FB_EN,
+	output  [4:0] FB_FORMAT,
+	output [11:0] FB_WIDTH,
+	output [11:0] FB_HEIGHT,
+	output [31:0] FB_BASE,
+	output [13:0] FB_STRIDE,
+	input         FB_VBL,
+	input         FB_LL,
 
 	output        LED_USER,  // 1 - ON, 0 - OFF.
 
@@ -73,9 +76,23 @@ module emu
 	output  [1:0] LED_POWER,
 	output  [1:0] LED_DISK,
 
+	input         CLK_AUDIO, // 24.576 MHz
 	output [15:0] AUDIO_L,
 	output [15:0] AUDIO_R,
 	output        AUDIO_S,    // 1 - signed audio samples, 0 - unsigned
+
+	//High latency DDR3 RAM interface
+	//Use for non-critical time purposes
+	output        DDRAM_CLK,
+	input         DDRAM_BUSY,
+	output  [7:0] DDRAM_BURSTCNT,
+	output [28:0] DDRAM_ADDR,
+	input  [63:0] DDRAM_DOUT,
+	input         DDRAM_DOUT_READY,
+	output        DDRAM_RD,
+	output [63:0] DDRAM_DIN,
+	output  [7:0] DDRAM_BE,
+	output        DDRAM_WE,
 
 	output        SDRAM_CLK,
 	output        SDRAM_CKE,
@@ -87,8 +104,8 @@ module emu
 	output        SDRAM_nCS,
 	output        SDRAM_nCAS,
 	output        SDRAM_nRAS,
-	output        SDRAM_nWE, 
-	
+	output        SDRAM_nWE,
+
 	// Open-drain User port.
 	// 0 - D+/RX
 	// 1 - D-/TX
@@ -98,14 +115,15 @@ module emu
 	output  [6:0] USER_OUT
 );
 
+
 assign VGA_F1    = 0;
 assign USER_OUT  = '1;
 assign LED_USER  = ioctl_download;
 assign LED_DISK  = 0;
 assign LED_POWER = 0;
 
-assign HDMI_ARX = status[1] ? 8'd16 : (status[2] | landscape) ? 8'd4 : 8'd3;
-assign HDMI_ARY = status[1] ? 8'd9  : (status[2] | landscape) ? 8'd3 : 8'd4;
+assign VIDEO_ARX = status[1] ? 8'd16 : (status[2] | landscape) ? 8'd4 : 8'd3;
+assign VIDEO_ARY = status[1] ? 8'd9  : (status[2] | landscape) ? 8'd3 : 8'd4;
 
 
 `include "build_id.v" 
@@ -302,30 +320,6 @@ wire hblank, vblank;
 wire hs, vs;
 wire [3:0] r,g,b;
 
-/*
-//wire CLK_VIDEO = clkref;
-wire CLK_VIDEO = clk_vid;
-//wire CE_PIXEL  = 1;
-wire CE_PIXEL  = clkref;
-assign HDMI_CLK = CLK_VIDEO;
-assign VGA_CLK = CLK_VIDEO;
-assign HDMI_CE = CE_PIXEL;
-assign VGA_CE = CE_PIXEL;
-assign HDMI_R = VGA_R;
-assign HDMI_G = VGA_G;
-assign HDMI_B = VGA_B;
-assign HDMI_HS=VGA_HS;
-assign HDMI_VS=VGA_VS;
-assign HDMI_DE = VGA_DE;
-assign VGA_R = {r , r};
-assign VGA_G = {g , g};
-assign VGA_B = {b , b};
-assign VGA_HS= hs;
-assign VGA_VS =vs;
-assign VGA_DE = ~(vblank | hblank);
-//assign VGA_F1,
-*/
-
 
 reg ce_pix;
 always @(posedge clk_vid) begin
@@ -335,9 +329,11 @@ always @(posedge clk_vid) begin
         ce_pix <= div == 0;
 end
 
+wire rotate_ccw = ccw;
+screen_rotate screen_rotate (.*);
 
 
-arcade_video #(256,400,12) arcade_video
+arcade_video #(256,12) arcade_video
 (
 	.*,
 
@@ -349,7 +345,6 @@ arcade_video #(256,400,12) arcade_video
 	.HSync(hs),
 	.VSync(vs),
 
-	.rotate_ccw(ccw),
 	.fx(status[5:3])
 );
 
