@@ -50,6 +50,7 @@ module emu
 	output        VGA_DE,    // = ~(VBlank | HBlank)
 	output        VGA_F1,
 	output [1:0]  VGA_SL,
+	output        VGA_SCALER, // Force VGA scaler
 
 	// Use framebuffer from DDRAM (USE_FB=1 in qsf)
 	// FB_FORMAT:
@@ -67,6 +68,16 @@ module emu
 	output [13:0] FB_STRIDE,
 	input         FB_VBL,
 	input         FB_LL,
+	output        FB_FORCE_BLANK,
+
+	// Palette control for 8bit modes.
+	// Ignored for other video modes.
+	output        FB_PAL_CLK,
+	output  [7:0] FB_PAL_ADDR,
+	output [23:0] FB_PAL_DOUT,
+	input  [23:0] FB_PAL_DIN,
+	output        FB_PAL_WR,
+
 
 	output        LED_USER,  // 1 - ON, 0 - OFF.
 
@@ -117,19 +128,23 @@ module emu
 
 
 assign VGA_F1    = 0;
+assign VGA_SCALER= 0;
+
 assign USER_OUT  = '1;
 assign LED_USER  = ioctl_download;
 assign LED_DISK  = 0;
 assign LED_POWER = 0;
 
-assign VIDEO_ARX = status[1] ? 8'd16 : (status[2] | landscape) ? 8'd4 : 8'd3;
-assign VIDEO_ARY = status[1] ? 8'd9  : (status[2] | landscape) ? 8'd3 : 8'd4;
+wire [1:0] ar = status[15:14];
 
+assign VIDEO_ARX = (!ar) ? ((status[2] | landscape) ? 8'd4 : 8'd3) : (ar - 1'd1);
+assign VIDEO_ARY = (!ar) ? ((status[2] | landscape) ? 8'd3 : 8'd4) : 12'd0;
 
 `include "build_id.v" 
 localparam CONF_STR = {
 	"A.IREMM62;;",
-	"H0O1,Aspect Ratio,Original,Wide;",
+	"H0OEF,Aspect ratio,Original,Full Screen,[ARC1],[ARC2];",
+
 	"H1H0O2,Orientation,Vert,Horz;",
 	"O35,Scandoubler Fx,None,HQ2x,CRT 25%,CRT 50%,CRT 75%;",
 	"-;",
@@ -204,8 +219,6 @@ wire        ioctl_wr;
 wire [24:0] ioctl_addr;
 wire  [7:0] ioctl_dout;
 
-wire [10:0] ps2_key;
-
 wire [15:0] joy1 = joy1a;
 wire [15:0] joy2 = joy2a;
 wire [15:0] joy1a;
@@ -234,8 +247,8 @@ hps_io #(.STRLEN($size(CONF_STR)>>3)) hps_io
 	.ioctl_index(ioctl_index),
 
 	.joystick_0(joy1a),
-	.joystick_1(joy2a),
-	.ps2_key(ps2_key)
+	.joystick_1(joy2a)
+
 );
 
 assign ioctl_download = ioctl_download_2 & !ioctl_index;
@@ -243,78 +256,25 @@ assign ioctl_download = ioctl_download_2 & !ioctl_index;
 reg [7:0] sw[8];
 always @(posedge clk_sys) if (ioctl_wr && (ioctl_index==254) && !ioctl_addr[24:3]) sw[ioctl_addr[2:0]] <= ioctl_dout;
 
-wire       pressed = ps2_key[9];
-wire [8:0] code    = ps2_key[8:0];
-always @(posedge clk_sys) begin
-	reg old_state;
-	old_state <= ps2_key[10];
-	
-	if(old_state != ps2_key[10]) begin
-		casex(code)
-			'hX75: btn_up          <= pressed; // up
-			'hX72: btn_down        <= pressed; // down
-			'hX6B: btn_left        <= pressed; // left
-			'hX74: btn_right       <= pressed; // right
-			'h029: btn_fireA        <= pressed; // space
-			'h014: btn_fireB        <= pressed; // ctrl
-
-			'h005: btn_start_1     <= pressed; // F1
-			'h006: btn_start_2     <= pressed; // F2
-			'h004: btn_coin        <= pressed; // F3
-
-			// JPAC/IPAC/MAME Style Codes
-			'h016: btn_start_1     <= pressed; // 1
-			'h01E: btn_start_2     <= pressed; // 2
-			'h02E: btn_coin_1      <= pressed; // 5
-			'h036: btn_coin_2      <= pressed; // 6
-			'h02D: btn_up_2        <= pressed; // R
-			'h02B: btn_down_2      <= pressed; // F
-			'h023: btn_left_2      <= pressed; // D
-			'h034: btn_right_2     <= pressed; // G
-			'h01C: btn_fireA_2      <= pressed; // A
-			'h01B: btn_fireB_2      <= pressed; // S
-		endcase
-	end
-end
-
-reg btn_up    = 0;
-reg btn_down  = 0;
-reg btn_right = 0;
-reg btn_left  = 0;
-reg btn_coin  = 0;
-reg btn_fireA  =0;
-reg btn_fireB  = 0;
-
-reg btn_start_1=0;
-reg btn_start_2=0;
-reg btn_coin_1=0;
-reg btn_coin_2=0;
-reg btn_up_2=0;
-reg btn_down_2=0;
-reg btn_left_2=0;
-reg btn_right_2=0;
-reg btn_fireA_2=0;
-reg btn_fireB_2=0;
-
 wire no_rotate = status[2] | direct_video | landscape  ;
-wire m_start    = btn_start_1 | joy1[7] | joy2[7];
-wire m_start_2  = btn_start_2 | joy1[6] | joy2[6];
-wire m_coin_1     = btn_coin    | joy1[8] | btn_coin_1  ;
-wire m_coin_2     =  joy2[8] | btn_coin_2;
+wire m_start    = joy1[7] | joy2[7];
+wire m_start_2  = joy1[6] | joy2[6];
+wire m_coin_1     = joy1[8] ;
+wire m_coin_2     =  joy2[8];
 
-wire m_up     =   btn_up    | joy1[3];
-wire m_down   =   btn_down  | joy1[2];
-wire m_left   =  btn_left  | joy1[1];
-wire m_right  =  btn_right | joy1[0];
-wire m_fireA   = btn_fireA | joy1[4];
-wire m_fireB   = btn_fireB | joy1[5];
+wire m_up     =   joy1[3];
+wire m_down   =   joy1[2];
+wire m_left   =  joy1[1];
+wire m_right  =  joy1[0];
+wire m_fireA   = joy1[4];
+wire m_fireB   = joy1[5];
 
-wire m_up_2     =  btn_up_2    | joy2[3];
-wire m_down_2   =  btn_down_2  | joy2[2];
-wire m_left_2   =  btn_left_2  | joy2[1];
-wire m_right_2  =  btn_right_2 | joy2[0];
-wire m_fireA_2   = btn_fireA_2 | joy2[4];
-wire m_fireB_2   = btn_fireB_2 | joy2[5];
+wire m_up_2     =  joy2[3];
+wire m_down_2   =  joy2[2];
+wire m_left_2   =  joy2[1];
+wire m_right_2  =  joy2[0];
+wire m_fireA_2   = joy2[4];
+wire m_fireB_2   = joy2[5];
 
 wire hblank, vblank;
 wire hs, vs;
