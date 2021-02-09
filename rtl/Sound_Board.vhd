@@ -316,7 +316,9 @@ port map(
 );
 
 snd_vma <= rom_cs and cpu_vma;
+
 snd_rom_addr <= cpu_addr(15 downto 0);
+
 
 -- cpu wram
 cpu_ram : entity work.spram

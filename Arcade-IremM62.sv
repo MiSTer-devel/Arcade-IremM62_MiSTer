@@ -39,8 +39,8 @@ module emu
 	output        CE_PIXEL,
 
 	//Video aspect ratio for HDMI. Most retro systems have ratio 4:3.
-	output  [7:0] VIDEO_ARX,
-	output  [7:0] VIDEO_ARY,
+	output [11:0] VIDEO_ARX,
+	output [11:0] VIDEO_ARY,
 
 	output  [7:0] VGA_R,
 	output  [7:0] VGA_G,
@@ -52,6 +52,7 @@ module emu
 	output [1:0]  VGA_SL,
 	output        VGA_SCALER, // Force VGA scaler
 
+	`ifdef USE_FB
 	// Use framebuffer from DDRAM (USE_FB=1 in qsf)
 	// FB_FORMAT:
 	//    [2:0] : 011=8bpp(palette) 100=16bpp 101=24bpp 110=32bpp
@@ -59,7 +60,6 @@ module emu
 	//    [4]   : 0=RGB  1=BGR (for 16/24/32 modes)
 	//
 	// FB_STRIDE either 0 (rounded to 256 bytes) or multiple of 16 bytes.
-
 	output        FB_EN,
 	output  [4:0] FB_FORMAT,
 	output [11:0] FB_WIDTH,
@@ -77,7 +77,7 @@ module emu
 	output [23:0] FB_PAL_DOUT,
 	input  [23:0] FB_PAL_DIN,
 	output        FB_PAL_WR,
-
+	`endif
 
 	output        LED_USER,  // 1 - ON, 0 - OFF.
 
@@ -87,24 +87,27 @@ module emu
 	output  [1:0] LED_POWER,
 	output  [1:0] LED_DISK,
 
-	input         CLK_AUDIO, // 24.576 MHz
+        input         CLK_AUDIO, // 24.576 MHz
 	output [15:0] AUDIO_L,
 	output [15:0] AUDIO_R,
-	output        AUDIO_S,    // 1 - signed audio samples, 0 - unsigned
+	output        AUDIO_S,   // 1 - signed audio samples, 0 - unsigned
 
-	//High latency DDR3 RAM interface
-	//Use for non-critical time purposes
-	output        DDRAM_CLK,
-	input         DDRAM_BUSY,
-	output  [7:0] DDRAM_BURSTCNT,
-	output [28:0] DDRAM_ADDR,
-	input  [63:0] DDRAM_DOUT,
-	input         DDRAM_DOUT_READY,
-	output        DDRAM_RD,
-	output [63:0] DDRAM_DIN,
-	output  [7:0] DDRAM_BE,
-	output        DDRAM_WE,
+	`ifdef USE_DDRAM
+	  //High latency DDR3 RAM interface
+	  //Use for non-critical time purposes
+	  output        DDRAM_CLK,
+	  input         DDRAM_BUSY,
+	  output  [7:0] DDRAM_BURSTCNT,
+	  output [28:0] DDRAM_ADDR,
+	  input  [63:0] DDRAM_DOUT,
+	  input         DDRAM_DOUT_READY,
+	  output        DDRAM_RD,
+	  output [63:0] DDRAM_DIN,
+	  output  [7:0] DDRAM_BE,
+	  output        DDRAM_WE,
+	`endif
 
+`ifdef USE_SDRAM
 	output        SDRAM_CLK,
 	output        SDRAM_CKE,
 	output [12:0] SDRAM_A,
@@ -116,6 +119,7 @@ module emu
 	output        SDRAM_nCAS,
 	output        SDRAM_nRAS,
 	output        SDRAM_nWE,
+`endif
 
 	// Open-drain User port.
 	// 0 - D+/RX
@@ -126,7 +130,6 @@ module emu
 	output  [6:0] USER_OUT
 );
 
-
 assign VGA_F1    = 0;
 assign VGA_SCALER= 0;
 
@@ -134,6 +137,7 @@ assign USER_OUT  = '1;
 assign LED_USER  = ioctl_download;
 assign LED_DISK  = 0;
 assign LED_POWER = 0;
+assign {FB_PAL_CLK, FB_FORCE_BLANK, FB_PAL_ADDR, FB_PAL_DOUT, FB_PAL_WR} = '0;
 
 wire [1:0] ar = status[15:14];
 
@@ -190,7 +194,7 @@ end
 
 ////////////////////   CLOCKS   ///////////////////
 
-wire clk_sys, clk_vid, clk_aud, clk_mem;
+wire clk_sys, clk_vid, clk_aud, clk_mem,clk_3;
 
 wire pll_locked;
 
@@ -257,8 +261,8 @@ reg [7:0] sw[8];
 always @(posedge clk_sys) if (ioctl_wr && (ioctl_index==254) && !ioctl_addr[24:3]) sw[ioctl_addr[2:0]] <= ioctl_dout;
 
 wire no_rotate = status[2] | direct_video | landscape  ;
-wire m_start    = joy1[7] | joy2[7];
-wire m_start_2  = joy1[6] | joy2[6];
+wire m_start    = joy1[6] | joy2[6];
+wire m_start_2  = joy1[7] | joy2[7];
 wire m_coin_1     = joy1[8] ;
 wire m_coin_2     =  joy2[8];
 
@@ -318,7 +322,8 @@ assign AUDIO_S = 1'b0;
 wire [16:0] rom_addr;
 wire [15:0] rom_do;
 
-wire [17:0] snd_addr;
+reg [17:0] snd_addr;
+reg [17:0] snd_addr_old;
 wire [15:0] snd_rom_addr;
 wire [15:0] snd_do;
 wire        snd_vma;
@@ -365,7 +370,7 @@ sdram sdram(
 
 	.cpu1_addr     ( ioctl_download ? 17'h1ffff : {1'b0, rom_addr[16:1]} ),
 	.cpu1_q        ( rom_do ),
-	.cpu2_addr     ( ioctl_download ? 17'h1ffff : snd_addr[17:1] ),
+	.cpu2_addr     ( ioctl_download ? 17'h1ffff : snd_addr_old[17:1] ),
 	.cpu2_q        ( snd_do ),
 
 
@@ -386,6 +391,27 @@ sdram sdram(
 	.sp_q          ( sp_do     )
 );
 
+wire rom_snd_cs = ioctl_wr && ioctl_download && (ioctl_addr < 'h30000 && ioctl_addr >= 'h20000) && !ioctl_index;
+wire [7:0] snd_do_8;
+dpram #(
+      .init_file(""),
+      .widthad_a(16),
+      .width_a(8),
+      .widthad_b(16),
+      .width_b(8)
+   ) snd_rom (
+	.clock_a(clk_aud), // clk_aud ??
+	.address_a(snd_vma ? snd_rom_addr : snd_rom_addr2[15:0]),
+	.wren_a(1'b0),
+	.q_a(snd_do_8),
+
+	.clock_b(clk_sys),
+	.address_b(ioctl_addr[15:0]),
+	.wren_b(rom_snd_cs),
+	.data_b(ioctl_dout)
+	);
+
+
 // ROM download controller
 always @(posedge clk_sys) begin
 	reg        ioctl_wr_last = 0;
@@ -401,7 +427,8 @@ always @(posedge clk_sys) begin
 
 	// async clock domain crossing here (clk_snd -> clk_sys)
 	snd_vma_r <= snd_vma; snd_vma_r2 <= snd_vma_r;
-	if (snd_vma_r2) snd_addr <= snd_rom_addr + 18'h20000;
+	//if (snd_vma_r2) snd_addr <= snd_rom_addr[15:0];// + 18'h20000;
+	if (snd_vma_r2) snd_addr_old <= snd_rom_addr[15:0] + 18'h20000;
 end
 
 // reset signal generation
@@ -418,6 +445,12 @@ always @(posedge clk_sys) begin
 	if (ioctl_downloadD & ~ioctl_download) rom_loaded <= 1;
 	reset <= reset_count != 16'h0000;
 
+end
+
+reg [15:0] snd_rom_addr2;
+always @(posedge clk_aud)
+begin
+	if (snd_vma) snd_rom_addr2 <= snd_rom_addr;
 end
 
 wire [11:0] audio;
@@ -464,7 +497,7 @@ target_top target_top(
 	.cpu_rom_addr(rom_addr),
 	.cpu_rom_do( rom_addr[0] ? rom_do[15:8] : rom_do[7:0] ),
 	.snd_rom_addr(snd_rom_addr),
-	.snd_rom_do(snd_rom_addr[0] ? snd_do[15:8] : snd_do[7:0]),
+	.snd_rom_do(snd_do_8),
 	.snd_vma(snd_vma),
 	.gfx1_addr(chr1_addr),
 	.gfx1_do(chr1_do),
