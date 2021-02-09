@@ -322,8 +322,6 @@ assign AUDIO_S = 1'b0;
 wire [16:0] rom_addr;
 wire [15:0] rom_do;
 
-reg [17:0] snd_addr;
-reg [17:0] snd_addr_old;
 wire [15:0] snd_rom_addr;
 wire [15:0] snd_do;
 wire        snd_vma;
@@ -370,8 +368,8 @@ sdram sdram(
 
 	.cpu1_addr     ( ioctl_download ? 17'h1ffff : {1'b0, rom_addr[16:1]} ),
 	.cpu1_q        ( rom_do ),
-	.cpu2_addr     ( ioctl_download ? 17'h1ffff : snd_addr_old[17:1] ),
-	.cpu2_q        ( snd_do ),
+	.cpu2_addr     (  ),
+	.cpu2_q        (  ),
 
 
 	// port2 for sprite graphics
@@ -425,10 +423,6 @@ always @(posedge clk_sys) begin
 		end
 	end
 
-	// async clock domain crossing here (clk_snd -> clk_sys)
-	snd_vma_r <= snd_vma; snd_vma_r2 <= snd_vma_r;
-	//if (snd_vma_r2) snd_addr <= snd_rom_addr[15:0];// + 18'h20000;
-	if (snd_vma_r2) snd_addr_old <= snd_rom_addr[15:0] + 18'h20000;
 end
 
 // reset signal generation
