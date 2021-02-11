@@ -8,7 +8,7 @@
 	<category>Adventure</category>
 	<category>Platform / Extra</category>
 	<rbf>iremm62</rbf>
-        <buttons names="Fire,Jump,Start 2P,Start 1P,Coin" default="A,B,Select,Start,R"/>
+        <buttons names="Fire,Jump,Start 1P,Start 2P,Coin" default="A,B,Start,Select,R"/>
 	<switches default="FF,FD">
 		<dip bits="0,1" name="Energy Decrease" ids="Fastest,Fast,Medium,Slow"></dip>
 		<dip bits="2,3" name="Lives" ids="5,4,2,3"></dip>

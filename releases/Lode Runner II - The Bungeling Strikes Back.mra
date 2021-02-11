@@ -11,7 +11,7 @@
 		<dip bits="0" name="Timer" ids="Fast,Slow"></dip>
 		<dip bits="1" name="Game Speed" ids="Low,High"></dip>
 		<dip bits="2,3" name="Lives" ids="5,4,2,3"></dip>
-                <dip bits="4,7" name="Coinage" ids="1C/1P,2C/1P" values="15,14"></dip>
+        <dip bits="4,7" name="Coinage" ids="1C/1P,2C/1P" values="15,14"></dip>
 		<dip bits="8" name="Flip Screen" ids="On,Off"></dip>
 		<dip bits="9" name="Cabinet" ids="Upright,Cocktail"></dip>
 		<dip bits="10" name="Coin Mode" ids="Mode 2,Mode 1"></dip>

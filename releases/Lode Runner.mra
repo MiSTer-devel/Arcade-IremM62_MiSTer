@@ -10,7 +10,7 @@
 	<switches default="FF,FD">
 		<dip bits="0,1" name="Timer" ids="Fastest,Fast,Medium,Slow"></dip>
 		<dip bits="2,3" name="Lives" ids="5,4,2,3"></dip>
-                <dip bits="4,7" name="Coinage" ids="Free Play,1C/1C" values="0,15"></dip>
+        <dip bits="4,7" name="Coinage" ids="Free Play,1C/1C" values="0,15"></dip>
 		<dip bits="8" name="Flip Screen" ids="On,Off"></dip>
 		<dip bits="9" name="Cabinet" ids="Upright,Cocktail"></dip>
 		<dip bits="10" name="Coin Mode" ids="Mode 2,Mode 1"></dip>
