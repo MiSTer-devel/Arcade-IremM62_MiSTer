@@ -120,4 +120,14 @@
 		<part repeat="0x300">FF</part>
 		<part crc="7a601c3d" name="b-5f-.bin"/>
 	</rom>
+
+	<rom index="3" md5="none">
+		<part>
+		 00 00 EA 06 78 00 41 00
+		 00 00 E9 80 03 52 00 00
+		</part>
+	</rom>
+	<nvram index="4" size="123"/>	
+
+
 </misterromdescription>

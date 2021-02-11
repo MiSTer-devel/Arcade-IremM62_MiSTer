@@ -54,15 +54,23 @@ entity target_top is port(
 		cpu_rom_addr    : out std_logic_vector(16 downto 0);
 		cpu_rom_do      : in std_logic_vector(7 downto 0);
 		snd_rom_addr    : out std_logic_vector(15 downto 0);
-		snd_rom_do      : in std_logic_vector(7 downto 0);
+		snd_rom_do      : in std_logic_vector(7 downto 0); 
 		snd_vma         : out std_logic;
 		gfx1_addr       : out std_logic_vector(17 downto 2);
 		gfx1_do         : in std_logic_vector(31 downto 0);
 		gfx2_addr       : out std_logic_vector(17 downto 2);
 		gfx2_do         : in std_logic_vector(31 downto 0);
 		gfx3_addr       : out std_logic_vector(17 downto 2);
-		gfx3_do         : in std_logic_vector(31 downto 0)
-  );
+		gfx3_do         : in std_logic_vector(31 downto 0);
+
+
+		-- high score
+		ram_address: in  std_logic_vector(11 downto 0);
+		ram_data_hi   : out std_logic_vector(7 downto 0);
+		ram_data_in: in  std_logic_vector(7 downto 0);
+		ram_data_write:  in std_logic
+
+	);
 end target_top;
 
 architecture SYN of target_top is 
@@ -177,7 +185,14 @@ pace_inst : entity work.pace
 		gfx2_addr         => gfx2_addr,
 		gfx2_do           => gfx2_do,
 		gfx3_addr         => gfx3_addr,
-		gfx3_do           => gfx3_do
+		gfx3_do           => gfx3_do,
+		
+		ram_address       =>  ram_address,
+		ram_data_hi       =>  ram_data_hi,
+		ram_data_in       =>  ram_data_in,
+		ram_data_write    =>  ram_data_write
+		
+		
     );
 
 		inputs_i.jamma_n.coin(1) <= not usr_coin1;

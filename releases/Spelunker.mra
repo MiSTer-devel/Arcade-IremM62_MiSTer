@@ -88,4 +88,13 @@
 		<part crc="0478082b" name="sprm.2h"/>
 		<part crc="746c6238" name="sprb.5p"/>
 	</rom>
+	
+	<rom index="3" md5="none">
+		<part>
+		 00 00 E0 52 64 39 3F 00
+		 00 00 E0 3B 02 39 08 00
+		</part>
+	</rom>
+	<nvram index="4" size="102"/>	
+	
 </misterromdescription>

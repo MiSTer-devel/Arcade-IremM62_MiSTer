@@ -137,4 +137,12 @@
 		<part repeat="0x2e0">FF</part>
 		<part crc="ce746937" name="br-b-5p"/>
 	</rom>
+
+	<rom index="3" md5="none">
+		<part>
+		 00 00 ED 50 B0 00 08 00
+		</part>
+	</rom>
+	<nvram index="4" size="176"/>
+
 </misterromdescription>

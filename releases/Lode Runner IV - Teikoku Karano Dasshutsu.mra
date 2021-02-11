@@ -81,4 +81,12 @@
 		<part repeat="0x300">FF</part>
 		<part crc="e01f69e2" name="lr4-b-5p"/>
 	</rom>
+	<rom index="3" md5="none">
+		<part>
+		 00 00 E7 35 C8 00 06 00
+		 00 00 E6 EA 03 00 70 00
+		</part>
+	</rom>
+	<nvram index="4" size="203"/>
+
 </misterromdescription>

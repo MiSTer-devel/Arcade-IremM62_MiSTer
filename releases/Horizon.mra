@@ -96,4 +96,13 @@
 		<part repeat="0x300">FF</part>
 		<part crc="208b49e9" name="hrzb-5p"/>
 	</rom>
+
+	<rom index="3" md5="none">
+		<part>
+		 00 00 E8 01 96 28 23 00
+		 00 00 E0 3C 02 28 06 00
+		</part>
+	</rom>
+	<nvram index="4" size="152"/>	
+
 </misterromdescription>

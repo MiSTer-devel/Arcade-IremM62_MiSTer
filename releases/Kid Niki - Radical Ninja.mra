@@ -82,4 +82,13 @@
 		<part crc="70d668ef" name="dr27.3j"/>
 		<part crc="11cd1f2e" name="dr32.5p"/>
 	</rom>
+
+	<rom index="3" md5="none">
+		<part>
+		 00 00 E0 62 6E 00 20 00
+		 00 00 E0 2B 03 00 00 00
+		</part>
+	</rom>
+	<nvram index="4" size="108"/>	
+
 </misterromdescription>

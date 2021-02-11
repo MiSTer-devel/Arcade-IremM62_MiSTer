@@ -69,8 +69,14 @@ entity platform is
     gfx2_addr       : out std_logic_vector(17 downto 2);
     gfx2_do         : in std_logic_vector(31 downto 0);
     gfx3_addr       : out std_logic_vector(17 downto 2);
-    gfx3_do         : in std_logic_vector(31 downto 0)
-  );
+    gfx3_do         : in std_logic_vector(31 downto 0);
+
+		-- high score
+		ram_address: in  std_logic_vector(11 downto 0);
+		ram_data_hi   : out std_logic_vector(7 downto 0);
+		ram_data_in: in  std_logic_vector(7 downto 0);
+		ram_data_write:  in std_logic
+	 );
 
 end platform;
 
@@ -661,20 +667,43 @@ begin
 
   end block BLK_VRAM;
 
-  wram_inst : entity work.spram
-    generic map
-    (
-      widthad_a => 12
-    )
-    port map
-    (
-      clock     => clk_sys,
-      address   => cpu_a(11 downto 0),
-      data      => cpu_d_o,
-      wren      => wram_wr,
-      q         => wram_d_o
-    );
+--  wram_inst : entity work.spram
+--    generic map
+--    (
+--      widthad_a => 12
+--    )
+--    port map
+--    (
+--      clock     => clk_sys,
+--      address   => cpu_a(11 downto 0),
+--      data      => cpu_d_o,
+--      wren      => wram_wr,
+--      q         => wram_d_o
+--    );
+    wram_inst : entity work.dpram
+      generic map
+      (
+        init_file  => "",
+        widthad_a  => 12,
+        width_a    => 8,
+        widthad_b  => 12,
+        width_b    => 8
+     )
+      port map
+      (
+        clock_a     => clk_sys,
+        address_a   => cpu_a(11 downto 0),
+        wren_a      => wram_wr,
+        data_a      => cpu_d_o,
+        q_a         => wram_d_o,
+		  
+        clock_b     => clk_sys,
+        address_b   => ram_address,
+        wren_b      => ram_data_write,
+        data_b      => ram_data_in,
+        q_b         => ram_data_hi
 
+      );
   -- tilemap 1 palette address
   tilemap1_pal_a <= spelunkr_palbank & tilemap_i(1).pal_a(6 downto 0) when hwsel = HW_SPELUNKR else
                     spelunk2_palbank(0) & tilemap_i(1).pal_a(6 downto 0) when hwsel = HW_SPELUNK2 and tilemap_i(2).set = '0' else
