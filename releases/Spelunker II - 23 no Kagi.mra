@@ -80,7 +80,8 @@
 		<part repeat="0x200">FF</part>
 		<part crc="cd126f6a" name="sp2-b.5p"/>
 	</rom>
-
+	
+	<rom index="3" md5="none">
 		<part>
 		 00 00 E0 66 64 99 3F 00
 		 00 00 E0 4F 02 99 11 00
