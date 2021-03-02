@@ -86,8 +86,8 @@
 
 	<rom index="3" md5="none">
 		<part>
-		 00 00 E6 BD C8 00 05 00
-		 00 00 E6 72 03 00 80 00
+		 00 00 E6 BD 00 C8 00 05
+		 00 00 E6 72 00 03 00 80
 		</part>
 	</rom>
 	<nvram index="4" size="203"/>

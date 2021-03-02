@@ -137,7 +137,7 @@ assign VGA_F1    = 0;
 assign VGA_SCALER= 0;
 
 assign USER_OUT  = '1;
-assign LED_USER  = ioctl_download;
+assign LED_USER  = rom_download;
 assign LED_DISK  = 0;
 assign LED_POWER = 0;
 assign {FB_PAL_CLK, FB_FORCE_BLANK, FB_PAL_ADDR, FB_PAL_DOUT, FB_PAL_WR} = '0;
@@ -157,7 +157,6 @@ localparam CONF_STR = {
 	"-;",
 	"DIP;",
 	"-;",
-	"OG,High Score Save,Manual,Off;",
 	"R0,Reset;",
 	"J1,Dig Left,Dig Right,Start 1P,Start 2P,Coin;",
 	"jn,A,B,Start,Select,R;",
@@ -220,8 +219,8 @@ wire  [1:0] buttons;
 wire        forced_scandoubler;
 wire        direct_video;
 
-wire        ioctl_download_2;
 wire        ioctl_download;
+wire        rom_download;
 wire        ioctl_upload;
 wire  [7:0] ioctl_index;
 wire        ioctl_wr;
@@ -251,7 +250,7 @@ hps_io #(.STRLEN($size(CONF_STR)>>3)) hps_io
 	.direct_video(direct_video),
 
 	.ioctl_upload(ioctl_upload),
-	.ioctl_download(ioctl_download_2),
+	.ioctl_download(ioctl_download),
 	.ioctl_wr(ioctl_wr),
 	.ioctl_addr(ioctl_addr),
 	.ioctl_dout(ioctl_dout),
@@ -263,7 +262,7 @@ hps_io #(.STRLEN($size(CONF_STR)>>3)) hps_io
 
 );
 
-assign ioctl_download = ioctl_download_2 & !ioctl_index;
+assign rom_download = ioctl_download & !ioctl_index;
 
 reg [7:0] sw[8];
 always @(posedge clk_sys) if (ioctl_wr && (ioctl_index==254) && !ioctl_addr[24:3]) sw[ioctl_addr[2:0]] <= ioctl_dout;
@@ -370,11 +369,11 @@ sdram sdram(
 	.port1_ack     ( ),
 	.port1_a       ( ioctl_addr[23:1] ),
 	.port1_ds      ( {ioctl_addr[0], ~ioctl_addr[0]} ),
-	.port1_we      ( ioctl_download ),
+	.port1_we      ( rom_download ),
 	.port1_d       ( {ioctl_dout, ioctl_dout} ),
 	.port1_q       ( ),
 
-	.cpu1_addr     ( ioctl_download ? 17'h1ffff : {1'b0, rom_addr[16:1]} ),
+	.cpu1_addr     ( rom_download ? 17'h1ffff : {1'b0, rom_addr[16:1]} ),
 	.cpu1_q        ( rom_do ),
 	.cpu2_addr     (  ),
 	.cpu2_q        (  ),
@@ -385,7 +384,7 @@ sdram sdram(
 	.port2_ack     ( ),
 	.port2_a       ( sp_ioctl_addr[23:1] ),
 	.port2_ds      ( {sp_ioctl_addr[0], ~sp_ioctl_addr[0]} ),
-	.port2_we      ( ioctl_download ),
+	.port2_we      ( rom_download ),
 	.port2_d       ( {ioctl_dout, ioctl_dout} ),
 	.port2_q       ( ),
 
@@ -397,7 +396,7 @@ sdram sdram(
 	.sp_q          ( sp_do     )
 );
 
-wire rom_snd_cs = ioctl_wr && ioctl_download && (ioctl_addr < 'h30000 && ioctl_addr >= 'h20000) && !ioctl_index;
+wire rom_snd_cs = ioctl_wr && rom_download && (ioctl_addr < 'h30000 && ioctl_addr >= 'h20000) && !ioctl_index;
 wire [7:0] snd_do_8;
 dpram #(
       .init_file(""),
@@ -424,7 +423,7 @@ always @(posedge clk_sys) begin
 	reg        snd_vma_r, snd_vma_r2;
 
 	ioctl_wr_last <= ioctl_wr;
-	if (ioctl_download) begin
+	if (rom_download) begin
 		if (~ioctl_wr_last && ioctl_wr) begin
 			port1_req <= ~port1_req;
 			if (ioctl_addr >= 20'h30000) port2_req <= ~port2_req;
@@ -437,14 +436,14 @@ end
 reg reset = 1;
 reg rom_loaded = 0;
 always @(posedge clk_sys) begin
-	reg ioctl_downloadD;
+	reg rom_downloadD;
 	reg [15:0] reset_count;
-	ioctl_downloadD <= ioctl_download;
+	rom_downloadD <= rom_download;
 
 	if (status[0] | buttons[1] | ~rom_loaded) reset_count <= 16'hffff;
 	else if (reset_count != 0) reset_count <= reset_count - 1'd1;
 
-	if (ioctl_downloadD & ~ioctl_download) rom_loaded <= 1;
+	if (rom_downloadD & ~rom_download) rom_loaded <= 1;
 	reset <= reset_count != 16'h0000;
 
 end
@@ -508,39 +507,43 @@ target_top target_top(
 	.gfx2_addr(sp_addr),
 	.gfx2_do(sp_do),
 
-	.ram_address(ram_address),
-	.ram_data_hi(ioctl_din),
-	.ram_data_in(hiscore_to_ram),
-	.ram_data_write(hiscore_write)
+	.hs_address(hs_address),
+	.hs_data_out(ioctl_din),
+	.hs_data_in(hs_data_in),
+	.hs_write(hs_write)
 
 	);
 
   
-wire [11:0]ram_address;
-wire [7:0]hiscore_to_ram;
-wire hiscore_write;
-//wire hiscore_pause;
+wire [11:0]hs_address;
+wire [7:0]hs_data_in;
+wire hs_write;
+wire hs_access;
 
 //assign pause = hiscore_pause || pause_toggle;
 
-hiscore #(12) hi (
-   .clk(clk_sys),
-   .reset(reset),
-   .mode(status[16]),
+hiscore #(
+	.HS_ADDRESSWIDTH(12),
+	.CFG_ADDRESSWIDTH(2),
+	.CFG_LENGTHWIDTH(2),
+	.DELAY_CHECKWAIT(6'b111111),
+	.DELAY_CHECKHOLD(1'b0)
+) hi (
+	.clk(clk_sys),
+	.reset(reset),
 	.delay(1'b0),
-   .ioctl_upload(ioctl_upload),
-   .ioctl_download(ioctl_download),
-   .ioctl_wr(ioctl_wr),
-   .ioctl_addr(ioctl_addr),
-   .ioctl_dout(ioctl_dout),
-   .ioctl_din(ioctl_din),
-   .ioctl_index(ioctl_index),
-   .ram_address(ram_address),
-   .data_to_ram(hiscore_to_ram),
-   .ram_write(hiscore_write),
-//   .pause(hiscore_pause)
+	.ioctl_upload(ioctl_upload),
+	.ioctl_download(ioctl_download),
+	.ioctl_wr(ioctl_wr),
+	.ioctl_addr(ioctl_addr),
+	.ioctl_dout(ioctl_dout),
+	.ioctl_din(ioctl_din),
+	.ioctl_index(ioctl_index),
+	.ram_address(hs_address),
+	.data_to_ram(hs_data_in),
+	.ram_write(hs_write),
+	.ram_access(hs_access)
 );
-
   
   
   
