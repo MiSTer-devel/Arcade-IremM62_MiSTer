@@ -56,11 +56,11 @@ entity PACE is
     gfx3_addr       : out std_logic_vector(17 downto 2);
     gfx3_do         : in std_logic_vector(31 downto 0);
 
-	-- high score
-	ram_address: in  std_logic_vector(11 downto 0);
-	ram_data_hi   : out std_logic_vector(7 downto 0);
-	ram_data_in: in  std_logic_vector(7 downto 0);
-	ram_data_write:  in std_logic
+    -- high score
+    hs_address       : in  std_logic_vector(11 downto 0);
+    hs_data_out      : out std_logic_vector(7 downto 0);    
+    hs_data_in       : in  std_logic_vector(7 downto 0);
+    hs_write         : in  std_logic
 
 	 );
 end entity PACE;
@@ -164,10 +164,11 @@ begin
       gfx2_do         => gfx2_do,
       gfx3_addr       => gfx3_addr,
       gfx3_do         => gfx3_do,
-		ram_address       =>  ram_address,
-		ram_data_hi       =>  ram_data_hi,
-		ram_data_in       =>  ram_data_in,
-		ram_data_write    =>  ram_data_write
+
+      hs_address      =>  hs_address,
+      hs_data_out     =>  hs_data_out,
+      hs_data_in      =>  hs_data_in,
+      hs_write        =>  hs_write
     );
 
   graphics_inst : entity work.Graphics                                    

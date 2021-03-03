@@ -91,8 +91,8 @@
 	
 	<rom index="3" md5="none">
 		<part>
-		 00 00 E0 52 64 39 3F 00
-		 00 00 E0 3B 02 39 08 00
+		 00 00 E0 52 00 64 39 3F
+		 00 00 E0 3B 00 02 39 08
 		</part>
 	</rom>
 	<nvram index="4" size="102"/>	

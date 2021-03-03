@@ -84,7 +84,7 @@
 
 	<rom index="3" md5="none">
 		<part>
-		 00 00 E5 65 37 70 4E 00
+		 00 00 E5 65 00 37 70 4E
 		</part>
 	</rom>
 	<nvram index="4" size="55"/>

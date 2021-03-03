@@ -71,12 +71,12 @@ entity platform is
     gfx3_addr       : out std_logic_vector(17 downto 2);
     gfx3_do         : in std_logic_vector(31 downto 0);
 
-		-- high score
-		ram_address: in  std_logic_vector(11 downto 0);
-		ram_data_hi   : out std_logic_vector(7 downto 0);
-		ram_data_in: in  std_logic_vector(7 downto 0);
-		ram_data_write:  in std_logic
-	 );
+    -- high score
+    hs_address       : in  std_logic_vector(11 downto 0);
+    hs_data_out      : out std_logic_vector(7 downto 0);    
+    hs_data_in       : in  std_logic_vector(7 downto 0);
+    hs_write         : in  std_logic
+);
 
 end platform;
 
@@ -698,10 +698,10 @@ begin
         q_a         => wram_d_o,
 		  
         clock_b     => clk_sys,
-        address_b   => ram_address,
-        wren_b      => ram_data_write,
-        data_b      => ram_data_in,
-        q_b         => ram_data_hi
+        address_b   => hs_address,
+        wren_b      => hs_write,
+        data_b      => hs_data_in,
+        q_b         => hs_data_out
 
       );
   -- tilemap 1 palette address
