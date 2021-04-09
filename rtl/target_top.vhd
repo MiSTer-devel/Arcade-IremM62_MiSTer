@@ -47,6 +47,9 @@ entity target_top is port(
 		VGA_G           : out std_logic_vector(3 downto 0);
 		VGA_B           : out std_logic_vector(3 downto 0);
 
+		hs_offset       : in std_logic_vector(3 downto 0);
+		vs_offset       : in std_logic_vector(3 downto 0);
+
 		dl_addr         : in std_logic_vector(11 downto 0);
 		dl_data         : in std_logic_vector(7 downto 0);
 		dl_wr           : in std_logic;
@@ -137,6 +140,8 @@ end generate GEN_RESETS;
 -- video_i.clk_ena <= '1';
  video_i.clk_ena <= '1' when count = "00" else '0';
  video_i.reset <= clkrst_i.rst(1);
+ video_i.hs_offset <= hs_offset;
+ video_i.vs_offset <= vs_offset;
  VGA_R <= video_o.rgb.r(9 downto 6);
  VGA_G <= video_o.rgb.g(9 downto 6);
  VGA_B <= video_o.rgb.b(9 downto 6);

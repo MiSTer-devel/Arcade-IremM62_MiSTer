@@ -150,8 +150,10 @@ assign VIDEO_ARY = (!ar) ? ((status[2] | landscape) ? 8'd3 : 8'd4) : 12'd0;
 `include "build_id.v" 
 localparam CONF_STR = {
 	"A.IREMM62;;",
+	"OGJ,CRT H adjust,0,+1,+2,+3,+4,+5,+6,+7,-8,-7,-6,-5,-4,-3,-2,-1;",
+	"OKN,CRT V adjust,0,+1,+2,+3,+4,+5,+6,+7,-8,-7,-6,-5,-4,-3,-2,-1;",
 	"H0OEF,Aspect ratio,Original,Full Screen,[ARC1],[ARC2];",
-
+	"O6,Video timing,Original,PAL;",
 	"H1H0O2,Orientation,Vert,Horz;",
 	"O35,Scandoubler Fx,None,HQ2x,CRT 25%,CRT 50%,CRT 75%;",
 	"-;",
@@ -291,13 +293,17 @@ wire hblank, vblank;
 wire hs, vs;
 wire [3:0] r,g,b;
 
+wire palmode = status[6];
+wire [3:0] hs_offset = status[19:16];
+wire [3:0] vs_offset = status[23:20];
 
-reg ce_pix;
+
+reg ce_pix, old_vid_clk_en;
 always @(posedge clk_vid) begin
-        reg [2:0] div;
-
-        div <= div + 1'd1;
-        ce_pix <= div == 0;
+        ce_pix <= 0;
+        old_vid_clk_en <= clkref;
+        if (old_vid_clk_en & ~clkref)
+            ce_pix <= 1;
 end
 
 wire rotate_ccw = ccw;
@@ -462,7 +468,7 @@ target_top target_top(
 	.clk_aud(clk_aud),//0.895MHz
 	.reset_in(reset),
 	.hwsel(core_mod), // see pkgvariant defines
-	.palmode(1'b0/*palmode*/),
+	.palmode(palmode),
 	.audio_out(audio),
 	.switches_i(sw[0]),
 	.switches_2(sw[1]),
@@ -490,6 +496,8 @@ target_top target_top(
 	.VGA_R(r),
 	.VGA_G(g),
 	.VGA_B(b),
+	.hs_offset(hs_offset),
+	.vs_offset(vs_offset),
 
 	.dl_addr(ioctl_addr - 20'hA0000),
 	.dl_data(ioctl_dout),

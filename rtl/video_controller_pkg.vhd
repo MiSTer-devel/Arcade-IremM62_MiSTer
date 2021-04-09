@@ -61,6 +61,8 @@ package video_controller_pkg is
     clk       : std_logic;
     clk_ena   : std_logic;
     reset     : std_logic;
+    hs_offset : std_logic_vector(3 downto 0);
+    vs_offset : std_logic_vector(3 downto 0);
   end record;
   
   type to_VIDEO_t is record
