@@ -56,6 +56,8 @@ entity PACE is
     gfx3_addr       : out std_logic_vector(17 downto 2);
     gfx3_do         : in std_logic_vector(31 downto 0);
 
+	 pause				: in std_logic;
+	 
     -- high score
     hs_address       : in  std_logic_vector(11 downto 0);
     hs_data_out      : out std_logic_vector(7 downto 0);    
@@ -164,6 +166,8 @@ begin
       gfx2_do         => gfx2_do,
       gfx3_addr       => gfx3_addr,
       gfx3_do         => gfx3_do,
+
+      pause           =>  pause,
 
       hs_address      =>  hs_address,
       hs_data_out     =>  hs_data_out,

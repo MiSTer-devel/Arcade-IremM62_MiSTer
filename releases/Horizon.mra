@@ -7,7 +7,7 @@
 	<manufacturer>Irem</manufacturer>
 	<category>Space / Moon</category>
 	<rbf>iremm62</rbf>
-        <buttons names="Fire,-,Start 1P,Start 2P,Coin" default="A,Start,Select,R"/>
+        <buttons names="Fire,-,Start 1P,Start 2P,Coin,Pause" default="A,B,Start,Select,R,L"/>
 
 	<switches default="FF,FD">
 		<dip bits="0,1" name="Lives" ids="2,4,5,3"></dip>
@@ -99,8 +99,9 @@
 
 	<rom index="3" md5="none">
 		<part>
-		 00 00 E8 01 00 96 28 23
-		 00 00 E0 3C 00 02 28 06
+		00 00 FF FF 00 3F 00 02 00 02 00 01 00 FF 00 00
+		00 00 E8 01 00 96 28 23
+		00 00 E0 3C 00 02 28 06
 		</part>
 	</rom>
 	<nvram index="4" size="152"/>	

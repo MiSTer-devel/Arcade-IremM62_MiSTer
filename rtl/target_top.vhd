@@ -66,12 +66,13 @@ entity target_top is port(
 		gfx3_addr       : out std_logic_vector(17 downto 2);
 		gfx3_do         : in std_logic_vector(31 downto 0);
 
+		pause            : in std_logic;
 
 		-- high score
-		hs_address       : in  std_logic_vector(11 downto 0);
+		hs_address       : in std_logic_vector(11 downto 0);
 		hs_data_out      : out std_logic_vector(7 downto 0);
-		hs_data_in       : in  std_logic_vector(7 downto 0);
-		hs_write         : in  std_logic
+		hs_data_in       : in std_logic_vector(7 downto 0);
+		hs_write         : in std_logic
 
 	);
 end target_top;
@@ -192,10 +193,12 @@ pace_inst : entity work.pace
 		gfx3_addr         => gfx3_addr,
 		gfx3_do           => gfx3_do,
 		
-		hs_address        =>  hs_address,
-		hs_data_out       =>  hs_data_out,
-		hs_data_in        =>  hs_data_in,
-		hs_write          =>  hs_write
+		pause             => pause,
+		
+		hs_address        => hs_address,
+		hs_data_out       => hs_data_out,
+		hs_data_in        => hs_data_in,
+		hs_write          => hs_write
 		
 		
     );
