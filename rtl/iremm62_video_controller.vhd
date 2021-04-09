@@ -31,9 +31,12 @@ architecture SYN of iremm62_video_controller is
   alias clk       : std_logic is video_i.clk;
   alias clk_ena   : std_logic is video_i.clk_ena;
   alias reset     : std_logic is video_i.reset;
+  alias hs_offset : std_logic_vector(3 downto 0) is video_i.hs_offset;
+  alias vs_offset : std_logic_vector(3 downto 0) is video_i.vs_offset;
  
   signal hcnt                   : unsigned(9 downto 0);
   signal vcnt                   : unsigned(8 downto 0);
+  signal vsync_start            : unsigned(8 downto 0);
   signal hsync                  : std_logic;
   signal vsync                  : std_logic;
   signal hblank                 : std_logic; -- hblank mux
@@ -49,6 +52,8 @@ begin
   --  hcnt [x080..x0FF-x100..x27F] => 128+384 = 512 pixels,  512/8.192Mhz => 1 line is 62.5us (16.000KHz) (hires)
   --  vcnt [x0E6..x0FF-x100..x1FF] =>  26+256 = 282 lines, 1 frame is 260 x 62.5us = 17.625ms (56.74Hz)
 
+  vsync_start <= '0'&x"F4" when palmode = '0' else '0'&x"DC";
+
   process (reset, clk, clk_ena)
   begin
     if reset='1' then
@@ -63,9 +68,7 @@ begin
           if palmode = '1' then
             vcnt <= '0'&x"C8";  -- 312 lines/PAL 50 Hz
           else
-            --vcnt <= '0'&x"E6";  -- from M52 schematics
-		  vcnt <= '0'&x"C8";  -- make it a bit bigger, for lode runner to fit - otherwise 6 and 6 pixels seem
-		                      -- to be missing - not sure why 
+            vcnt <= '0'&x"E6";  -- from M52 schematics
           end if;
         end if;
       end if;
@@ -84,12 +87,15 @@ begin
       -- display blank
       if hcnt = "00"&x"FF" then
         hblank1 <= '0';
-        if vcnt = '1'&x"00" then
-          vblank <= '0';
-        end if;
       end if;
       if (hires = '0' and hcnt = "01"&x"FF") or hcnt = "10"&x"7F" then
         hblank1 <= '1';
+        if vcnt = '0'&x"FF" then
+          vblank <= '0';
+        end if;
+        if vcnt = '1'&x"FF" then
+          vblank <= '1';
+        end if;
       end if;
       -- alternate blanking to hide hscroll garbage
       if hcnt = "01"&x"07" then
@@ -97,25 +103,20 @@ begin
       end if;
       if hcnt = "00"&x"87" then
         hblank2 <= '1';
-        if vcnt = '1'&x"FF" then
-          vblank <= '1';
-        end if;
       end if;
 
       -- display sync
-      if hcnt = "00"&x"8B" then
+      if hcnt = ("00"&x"9C" + unsigned(resize(signed(hs_offset), hcnt'length))) then
         hsync <= '1';
-        --if vcnt = '0'&x"F2" then
-        --if vcnt = '0'&x"E6" then 
-        if vcnt = '0'&x"E1" then --- move this up a bit to get the extra 12 pixels back in lode runner
+        if vcnt = (vsync_start + unsigned(resize(signed(vs_offset), vcnt'length))) then
           vsync <= '1';
         end if;
-      end if;
-      if hcnt = "00"&x"B1" then
-        hsync <= '0';
-        if vcnt = '0'&x"F4" then
+        if vcnt = (vsync_start + 3 + unsigned(resize(signed(vs_offset), vcnt'length))) then
           vsync <= '0';
         end if;
+      end if;
+      if hcnt = ("00"&x"C2" + unsigned(resize(signed(hs_offset), hcnt'length))) then
+        hsync <= '0';
       end if;
 
       -- registered rgb output
@@ -126,14 +127,15 @@ begin
         video_o.rgb <= rgb_i;
       end if;
 
+        video_o.hsync <= hsync;
+        video_o.vsync <= vsync;
+        video_o.hblank <= hblank;
+        video_o.vblank <= vblank;
+
     end if;
   end process;
 
-  video_o.hsync <= hsync;
-  video_o.vsync <= vsync;
   hblank <= hblank2 when hwsel = HW_KIDNIKI else hblank1;
-  video_o.hblank <= hblank;
-  video_o.vblank <= vblank;
   video_ctl_o.stb <= '1';
   video_ctl_o.x <= '0'&std_logic_vector(hcnt);
   video_ctl_o.y <= "00"&std_logic_vector(vcnt);
