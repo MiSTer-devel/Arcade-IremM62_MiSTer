@@ -7,7 +7,7 @@
 	<manufacturer>Irem</manufacturer>
 	<category>Fighter / Asian</category>
 	<rbf>iremm62</rbf>
-    <buttons names="Fire,Jump,Start 1P,Start 2P,Coin" default="A,B,Start,Select,R"/>
+    <buttons names="Fire,Jump,Start 1P,Start 2P,Coin,Pause" default="A,B,Start,Select,R,L"/>
 
 	<switches default="FF,FD">
 		<dip bits="0,1" name="Lives" ids="5,4,2,3"></dip>
@@ -85,8 +85,9 @@
 
 	<rom index="3" md5="none">
 		<part>
-		 00 00 E0 62 00 69 00 2E
-		 00 00 E0 2B 00 03 00 00
+		00 00 FF FF 00 3F 00 02 00 02 00 01 00 FF 00 00
+		00 00 E0 62 00 69 00 2E
+		00 00 E0 2B 00 03 00 00
 		</part>
 	</rom>
 	<nvram index="4" size="108"/>	

@@ -8,7 +8,7 @@
 	<category>Adventure</category>
 	<category>Platform / Extra</category>
 	<rbf>iremm62</rbf>
-        <buttons names="Fire,Jump,Start 1P,Start 2P,Coin" default="A,B,Start,Select,R"/>
+        <buttons names="Fire,Jump,Start 1P,Start 2P,Coin,Pause" default="A,B,Start,Select,R,L"/>
 	<switches default="FF,FD">
 		<dip bits="0,1" name="Energy Decrease" ids="Fastest,Fast,Medium,Slow"></dip>
 		<dip bits="2,3" name="Lives" ids="5,4,2,3"></dip>
@@ -83,8 +83,9 @@
 	
 	<rom index="3" md5="none">
 		<part>
-		 00 00 E0 66 00 64 99 3F
-		 00 00 E0 4F 00 02 99 11
+		00 00 FF FF 00 3F 00 02 00 02 00 01 00 FF 00 00
+		00 00 E0 66 00 64 99 3F
+		00 00 E0 4F 00 02 99 11
 		</part>
 	</rom>
 	<nvram index="4" size="102"/>	

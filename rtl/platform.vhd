@@ -71,6 +71,8 @@ entity platform is
     gfx3_addr       : out std_logic_vector(17 downto 2);
     gfx3_do         : in std_logic_vector(31 downto 0);
 
+	 pause				: in std_logic;
+	 
     -- high score
     hs_address       : in  std_logic_vector(11 downto 0);
     hs_data_out      : out std_logic_vector(7 downto 0);    
@@ -153,7 +155,7 @@ architecture SYN of platform is
 
   -- other signals
   signal rst_platform   : std_logic;
-  signal pause          : std_logic;
+--  signal pause          : std_logic;
   signal rot_en         : std_logic;
 
   -- Lode Runner 2,4
@@ -183,15 +185,15 @@ begin
   begin
     if rst_sys = '1' then
       rst_platform <= '0';
-      pause <= '0';
+--      pause <= '0';
       rot_en <= '0';  -- to default later
       spec_keys_r := (others => '0');
       layer_en := "11111";
     elsif rising_edge(clk_sys) then
       rst_platform <= spec_keys(0);
-      if spec_keys_r(1) = '0' and spec_keys(1) = '1' then
-        pause <= not pause;
-      end if;
+--      if spec_keys_r(1) = '0' and spec_keys(1) = '1' then
+--        pause <= not pause;
+--      end if;
       if spec_keys_r(2) = '0' and spec_keys(2) = '1' then
         rot_en <= not rot_en;
         if layer_en = "11111" then
