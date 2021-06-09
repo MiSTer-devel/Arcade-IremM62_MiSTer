@@ -1,12 +1,33 @@
 <misterromdescription>
-	<name>Lode Runner II - The Bungeling Strikes Back</name>
-	<mameversion>0221</mameversion>
-	<setname>ldrun2</setname>
-	<mratimestamp>20200601015747</mratimestamp>
+	<name>Lode Runner II- The Bungeling Strikes Back</name>
+	<region></region>
+	<homebrew>no</homebrew>
+	<bootleg>no</bootleg>
+	<version></version>
+	<alternative></alternative>
+	<platform>Irem M62</platform>
+	<series>Lode Runner</series>
 	<year>1984</year>
-	<manufacturer>Irem (licensed from Broderbund)</manufacturer>
-	<category>Platform</category>
+	<manufacturer>Irem</manufacturer>
+	<manufacturer>Broderbund</manufacturer>
+	<category>Platform - Climb</category>
+
+	<setname>ldrun2</setname>
+	<parent>ldrun3</parent>
+	<mameversion>0221</mameversion>
 	<rbf>iremm62</rbf>
+	<about></about>
+
+	<resolution>15kHz</resolution>
+	<rotation>horizontal</rotation>
+	<flip></flip>
+
+	<players>2 (alternating)</players>
+	<joystick>8-way</joystick>
+	<special_controls></special_controls>
+	<num_buttons>2</num_buttons>
+	<button_names></button_names>
+
 	<switches default="FF,FD">
 		<dip bits="0" name="Timer" ids="Fast,Slow"></dip>
 		<dip bits="1" name="Game Speed" ids="Low,High"></dip>
@@ -21,6 +42,7 @@
 		<dip bits="14" name="Invulnerability (Cheat)" ids="On,Off"></dip>
 		<dip bits="15" name="Service Mode" ids="On,Off"></dip>
 	</switches>
+
 	<rom index="1">
 		<part>01</part>
 	</rom>
@@ -127,7 +149,7 @@
 		<part repeat="0x300">FF</part>
 		<part crc="e01f69e2" name="lr2-b-5p"/>
 	</rom>
-
+	<rom index="2"></rom>
 	<rom index="3" md5="none">
 		<part>
 		00 00 FF FF 00 3F 00 02 00 02 00 01 00 FF 00 00
@@ -135,6 +157,11 @@
 		00 00 E6 72 00 03 00 80
 		</part>
 	</rom>
+	<rom index="4"></rom>
+
 	<nvram index="4" size="203"/>
 
+	<remark></remark>
+
+	<mratimestamp>20210430005030</mratimestamp>
 </misterromdescription>

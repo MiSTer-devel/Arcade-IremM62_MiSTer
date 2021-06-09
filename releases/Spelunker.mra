@@ -1,14 +1,33 @@
 <misterromdescription>
 	<name>Spelunker</name>
-	<mameversion>0221</mameversion>
-	<setname>spelunkr</setname>
-	<mratimestamp>20200601015747</mratimestamp>
+	<region></region>
+	<homebrew>no</homebrew>
+	<bootleg>no</bootleg>
+	<version></version>
+	<alternative></alternative>
+	<platform>Irem M62</platform>
+	<series></series>
 	<year>1985</year>
-	<manufacturer>Irem (licensed from Broderbund)</manufacturer>
-	<category>Adventure</category>
-	<category>Platform / Extra</category>
+	<manufacturer>Irem</manufacturer>
+	<manufacturer>Broderbund</manufacturer>
+	<category>Platform - Climb</category>
+
+	<setname>spelunkr</setname>
+	<parent>spelunkr</parent>
+	<mameversion>0221</mameversion>
 	<rbf>iremm62</rbf>
-        <buttons names="Fire,Jump,Start 1P,Start 2P,Coin,Pause" default="A,B,Start,Select,R,L"/>
+	<about></about>
+
+	<resolution>15kHz</resolution>
+	<rotation>horizontal</rotation>
+	<flip></flip>
+
+	<players>2 (alternating)</players>
+	<joystick>8-way</joystick>
+	<special_controls></special_controls>
+	<num_buttons>2</num_buttons>
+	<buttons default="A,B,Start,Select,R,L" names="Fire,Jump,Start 1P,Start 2P,Coin,Pause"></buttons>
+
 	<switches default="FF,F5">
 		<dip bits="0,1" name="Energy Decrease" ids="Fastest,Fast,Medium,Slow"></dip>
 		<dip bits="2,3" name="Lives" ids="5,4,2,3"></dip>
@@ -22,6 +41,7 @@
 		<dip bits="14" name="Invulnerability (Cheat)" ids="On,Off"></dip>
 		<dip bits="15" name="Service Mode" ids="On,Off"></dip>
 	</switches>
+
 	<rom index="1">
 		<part>09</part>
 	</rom>
@@ -88,7 +108,7 @@
 		<part crc="0478082b" name="sprm.2h"/>
 		<part crc="746c6238" name="sprb.5p"/>
 	</rom>
-	
+	<rom index="2"></rom>
 	<rom index="3" md5="none">
 		<part>
 		00 00 FF FF 00 3F 00 02 00 02 00 01 00 FF 00 00
@@ -96,6 +116,11 @@
 		00 00 E0 3B 00 02 39 08
 		</part>
 	</rom>
-	<nvram index="4" size="102"/>	
-	
+	<rom index="4"></rom>
+
+	<nvram index="4" size="102"/>
+
+	<remark></remark>
+
+	<mratimestamp>20210430005030</mratimestamp>
 </misterromdescription>
