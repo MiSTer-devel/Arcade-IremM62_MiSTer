@@ -25,7 +25,8 @@ set_global_assignment -name VHDL_FILE rtl/sprom.vhd
 set_global_assignment -name VHDL_FILE rtl/spram.vhd
 set_global_assignment -name SYSTEMVERILOG_FILE rtl/sdram.sv
 set_global_assignment -name SYSTEMVERILOG_FILE rtl/YM2149.sv
-set_global_assignment -name SYSTEMVERILOG_FILE rtl/hiscore.v
+set_global_assignment -name VERILOG_FILE rtl/hiscore.v
+set_global_assignment -name VERILOG_FILE rtl/pause.v
 set_global_assignment -name VHDL_FILE rtl/Sound_Board.vhd
 set_global_assignment -name QIP_FILE rtl/jt5205/jt5205.qip
 set_global_assignment -name QIP_FILE rtl/T80/T80.qip

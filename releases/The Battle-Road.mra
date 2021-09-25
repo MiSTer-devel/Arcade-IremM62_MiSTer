@@ -160,7 +160,7 @@
 	<rom index="2"></rom>
 	<rom index="3" md5="none">
 		<part>
-		00 00 FF FF 00 3F 00 02 00 02 00 01 00 FF 00 00
+		00 00 FF FF 00 3F 00 02 00 02 00 01 00 FF 02 00
 		00 00 ED 50 00 B0 00 08
 		</part>
 	</rom>
